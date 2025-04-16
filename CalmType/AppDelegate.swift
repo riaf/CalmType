@@ -24,6 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         setupKeyboardShortcuts()
         setupNotificationObserver()
         setupLocalEventMonitor()
+        showMainWindow()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
