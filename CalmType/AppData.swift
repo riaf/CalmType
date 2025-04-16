@@ -12,6 +12,7 @@ class AppData: ObservableObject {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(inputText, forType: .string)
+        inputText = ""
         print("Copied to clipboard (Cmd+Enter): \(inputText)")
         NotificationCenter.default.post(name: .hideMainWindow, object: nil)
     }
