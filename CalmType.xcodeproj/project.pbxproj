@@ -14,9 +14,22 @@
 		926F4F752DACD635000D29B8 /* CalmType.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CalmType.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		9264CA5C2DAF9B0900CD44FF /* Exceptions for "CalmType" folder in "CalmType" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 926F4F742DACD635000D29B8 /* CalmType */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		926F4F772DACD635000D29B8 /* CalmType */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				9264CA5C2DAF9B0900CD44FF /* Exceptions for "CalmType" folder in "CalmType" target */,
+			);
 			path = CalmType;
 			sourceTree = "<group>";
 		};
@@ -270,6 +283,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CalmType/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CalmType;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -302,6 +316,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CalmType/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CalmType;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
