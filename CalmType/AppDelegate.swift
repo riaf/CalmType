@@ -118,7 +118,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         mainWindow = window
     }
 
-    private func showMainWindow() {
+    func showMainWindow() {
         if mainWindow == nil {
             createMainWindow()
         }

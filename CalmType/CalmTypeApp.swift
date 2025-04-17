@@ -10,8 +10,18 @@ struct CalmTypeApp: App {
                 .environmentObject(appDelegate.appData)
         }
         .commands {
+            CommandGroup(replacing: .newItem) {
+                Button(String(localized: "New Window")) {
+                    if appDelegate.mainWindow == nil {
+                        appDelegate.showMainWindow()
+                    }
+                }
+                .keyboardShortcut("n", modifiers: .command)
+            }
+        }
+        .commands {
             CommandGroup(replacing: .appSettings) {
-                Button("Settings...") {
+                Button(String(localized: "Settings...")) {
                     appDelegate.openSettingsWindow()
                 }
                 .keyboardShortcut(",", modifiers: .command)
