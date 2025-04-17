@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CalmType - 思考を止めない、快適なテキスト入力パッド</title>
+  <style>
+    /* Base styles */
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #333;
+      line-height: 1.6;
+      background-color: #f9f9f9;
+    }
+    a { text-decoration: none; color: inherit; }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+    h1, h2, h3 { color: #222; margin-top: 0; }
+    h1 { font-size: 2.5rem; margin-bottom: 0.5em; }
+    h2 { font-size: 2rem; margin-bottom: 0.5em; }
+    p { margin-bottom: 1em; }
+    /* Button */
+    .btn {
+      display: inline-block;
+      background-color: #007aff;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    /* Sections */
+    section { padding: 60px 0; background-color: #fff; }
+    section:nth-child(even) { background-color: #f1f1f1; }
+    .hero { text-align: center; padding: 100px 20px; background-color: #fff; }
+    .hero img { max-width: 100%; height: auto; margin: 20px 0; }
+    /* Feature cards */
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+    .card-icon { font-size: 2.5rem; margin-bottom: 10px; color: #007aff; }
+    /* How-to list */
+    .steps { counter-reset: step; }
+    .step { position: relative; padding-left: 50px; margin-bottom: 30px; }
+    .step::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 0; width: 40px; height: 40px; line-height: 40px; border-radius: 50%; background: #007aff; color: #fff; text-align: center; font-weight: bold; }
+    /* Footer */
+    footer { text-align: center; padding: 40px 20px; font-size: 0.9rem; color: #666; }
+    footer a { color: #666; margin: 0 10px; }
+  </style>
+</head>
+<body>
+  <!-- ヒーローセクション -->
+  <header class="hero">
+    <div class="container">
+      <h1>もうEnterで送信しない。思考を止めない、Mac用テキスト入力パッド</h1>
+      <p>CalmTypeは日本語入力時の誤送信を防ぎ、安心してテキストを作成できるユーティリティです。</p>
+      <img src="ss.png" alt="CalmType アプリ画面">
+      <p><a href="[App Store Link]" class="btn">Mac App Store でダウンロード</a></p>
+    </div>
+  </header>
+
+  <!-- 課題提起セクション -->
+  <section id="problem">
+    <div class="container">
+      <h2>Enterキーでの「ヒヤリ」、もう終わりにしませんか？</h2>
+      <p>フォーム入力中、SNSやチャットで返信中に日本語確定のEnterで意図せず送信…その瞬間のヒヤリとした経験はありませんか？ 改行したいだけなのに、送信されてしまったメッセージに冷や汗をかいたことは多くのMacユーザーに共通するストレスです。</p>
+    </div>
+  </section>
+
+  <!-- ソリューションセクション -->
+  <section id="solution">
+    <div class="container">
+      <h2>CalmTypeで、穏やかな入力を。</h2>
+      <p>グローバルショートカットで専用ウィンドウを呼び出し、その中で安全にテキストを作成。確定キーを別に設けることで、誤送信の不安から解放されます。</p>
+    </div>
+  </section>
+
+  <!-- 主な機能紹介セクション -->
+  <section id="features">
+    <div class="container">
+      <h2>CalmTypeの主な機能</h2>
+      <div class="features">
+        <div class="card">
+          <div class="card-icon">⌨️</div>
+          <h3>どこからでも起動</h3>
+          <p><code>Ctrl + Option + T</code> (カスタマイズ可) で瞬時にウィンドウ表示/非表示。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📝</div>
+          <h3>集中できる入力エリア</h3>
+          <p>フローティングするミニマルなウィンドウ。自動フォーカスで即入力可能。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📋</div>
+          <h3>確実なコピー＆クローズ</h3>
+          <p><code>Cmd + Enter</code>で内容をクリップボードへコピーし、そのままウィンドウを閉じます。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <h3>自由なショートカット</h3>
+          <p>設定画面 (<code>Cmd + ,</code>) で呼び出しキーを簡単に変更可能。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 使い方セクション -->
+  <section id="howto">
+    <div class="container">
+      <h2>3ステップで簡単利用</h2>
+      <div class="steps">
+        <div class="step">
+          <h3>ショートカットで呼び出し</h3>
+          <p>任意の場所で<code>Ctrl + Option + T</code>を押してCalmTypeを開きます。</p>
+        </div>
+        <div class="step">
+          <h3>テキストを入力</h3>
+          <p>ミニマルなウィンドウで集中して文章を作成します。</p>
+        </div>
+        <div class="step">
+          <h3>Cmd+Enterでコピー＆終了</h3>
+          <p><code>Cmd + Enter</code>を押すとクリップボードにコピーされ、ウィンドウが閉じます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ベネフィットセクション -->
+  <section id="benefits">
+    <div class="container">
+      <h2>CalmTypeがもたらす快適さ</h2>
+      <ul>
+        <li>誤送信のストレス軽減</li>
+        <li>スムーズなワークフロー維持</li>
+        <li>集中力の向上と時間節約</li>
+        <li>どんなアプリでも同じ操作感</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ダウンロード(CTA)セクション -->
+  <section id="cta">
+    <div class="container" style="text-align:center;">
+      <h2>今すぐCalmTypeを体験する</h2>
+      <p>無料ダウンロード</p>
+      <p><a href="[App Store Link]" class="btn">Mac App Storeでダウンロード</a></p>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer>
+    <p>&copy; 2025 Katteba LLC.</p>
+    <p><a href="https://docs.katteba.co.jp/privacy.html">プライバシーポリシー</a></p>
+  </footer>
+</body>
+</html>
