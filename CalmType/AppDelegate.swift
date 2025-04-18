@@ -1,7 +1,7 @@
 import SwiftUI
 import KeyboardShortcuts
 import AppKit
-import Carbon.HIToolbox
+// Removed Carbon.HIToolbox import; key event handling moved to CustomTextEditor
 
 extension AppDelegate {
     static var shared: AppDelegate? {
@@ -11,25 +11,39 @@ extension AppDelegate {
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
-    var mainWindow: NSWindow?
-    var hostingView: NSView?
+    private(set) var mainWindow: NSWindow?
+    private var hostingView: NSView?
     let appData = AppData()
 
     private let mainWindowIdentifier = NSUserInterfaceItemIdentifier("mainWindow")
-    let settingsWindowIdentifier = NSUserInterfaceItemIdentifier("settingsWindow")
+    private let settingsWindowIdentifier = NSUserInterfaceItemIdentifier("settingsWindow")
 
-    private var eventMonitor: Any?
+    // Observer token for hideMainWindow notification
+    private var hideMainWindowObserver: NSObjectProtocol?
+
+    // private var eventMonitor: Any? // Removed; event handling in CustomTextEditor
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupKeyboardShortcuts()
         setupNotificationObserver()
-        setupLocalEventMonitor()
+        // Show main window on launch
         showMainWindow()
+    }
+    
+    /// If the app becomes active and no windows are visible, open the main window
+    func applicationDidBecomeActive(_ notification: Notification) {
+        let hasVisible = NSApp.windows.contains { $0.isVisible }
+        if !hasVisible {
+            showMainWindow()
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        NotificationCenter.default.removeObserver(self)
-        removeLocalEventMonitor()
+        // Remove notification observer
+        if let observer = hideMainWindowObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        // Local event monitoring removed; no teardown required
     }
 
     private func setupKeyboardShortcuts() {
@@ -39,41 +53,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private func setupNotificationObserver() {
-        NotificationCenter.default.addObserver(forName: .hideMainWindow, object: nil, queue: .main) { [weak self] _ in
+        // Observe hideMainWindow notification
+        hideMainWindowObserver = NotificationCenter.default.addObserver(
+            forName: .hideMainWindow,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.hideMainWindow()
         }
     }
 
-    private func setupLocalEventMonitor() {
-        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            guard let self = self, let window = self.mainWindow, window.isVisible else { return event }
-            let isCmdEnter = event.modifierFlags.contains(.command) &&
-                (event.keyCode == kVK_Return || event.keyCode == kVK_ANSI_KeypadEnter)
-            if isCmdEnter {
-                var responder: NSResponder? = window.firstResponder
-                var isTargetResponder = false
-                while responder != nil {
-                    if responder == self.hostingView {
-                        isTargetResponder = true
-                        break
-                    }
-                    responder = responder?.nextResponder
-                }
-                if isTargetResponder {
-                    self.appData.copyToClipboard()
-                    return nil
-                }
-            }
-            return event
-        }
-    }
 
-    private func removeLocalEventMonitor() {
-        if let monitor = eventMonitor {
-            NSEvent.removeMonitor(monitor)
-            eventMonitor = nil
-        }
-    }
 
     private func createMainWindow() {
         guard mainWindow == nil else { return }
@@ -107,13 +97,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         window.contentView = hostingView
 
-        DispatchQueue.main.async {
-            if let textView = self.findNSTextView(in: self.hostingView) {
-                window.initialFirstResponder = textView
-            } else {
-                window.initialFirstResponder = self.hostingView
-            }
-        }
         window.center()
         mainWindow = window
     }
@@ -124,6 +107,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
         NSApplication.shared.activate(ignoringOtherApps: true)
         mainWindow?.makeKeyAndOrderFront(nil)
+        // Key event monitoring handled by CustomTextEditor
     }
 
     private func hideMainWindow() {
@@ -138,27 +122,32 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
     }
 
-    private func findNSTextView(in view: NSView?) -> NSTextView? {
-        guard let view = view else { return nil }
-        if let textView = view as? NSTextView, textView.isEditable, textView.acceptsFirstResponder {
-            return textView
-        }
-        for subview in view.subviews {
-            if let textView = findNSTextView(in: subview) {
-                return textView
-            }
-        }
-        if let scrollView = view as? NSScrollView,
-           let docView = scrollView.documentView as? NSTextView,
-           docView.isEditable, docView.acceptsFirstResponder {
-            return docView
+    // findNSTextView removed; using CustomTextEditor lookup
+
+    private func findScrollView(in view: NSView?) -> NSScrollView? {
+        guard let v = view else { return nil }
+        if let sv = v as? NSScrollView { return sv }
+        for sub in v.subviews {
+            if let found = findScrollView(in: sub) { return found }
         }
         return nil
+    }
+
+    private func getTextView() -> NSTextView? {
+        guard let host = hostingView,
+              let scroll = findScrollView(in: host),
+              let tv = scroll.documentView as? NSTextView else {
+            return nil
+        }
+        return tv
     }
 
     func openSettingsWindow() {
         let existingWindow = NSApp.windows.first { $0.identifier == settingsWindowIdentifier }
         if let window = existingWindow {
+            // Bring settings window to front above floating main window
+            NSApp.activate(ignoringOtherApps: true)
+            window.level = .floating
             window.makeKeyAndOrderFront(self)
         } else {
             let settingsView = SettingsView().environmentObject(appData)
@@ -171,6 +160,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             window.setFrameAutosaveName("Settings Window")
             window.contentView = NSHostingView(rootView: settingsView)
             window.isReleasedWhenClosed = false
+            window.level = .floating
+            NSApp.activate(ignoringOtherApps: true)
             window.makeKeyAndOrderFront(self)
         }
     }
@@ -183,17 +174,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func windowDidBecomeKey(_ notification: Notification) {
-        if let window = notification.object as? NSWindow, window == mainWindow {
-            DispatchQueue.main.async {
-                if let textView = self.findNSTextView(in: self.hostingView) {
-                    window.makeFirstResponder(textView)
-                }
+        guard let window = notification.object as? NSWindow, window == mainWindow else { return }
+        DispatchQueue.main.async {
+            if let tv = self.getTextView() {
+                window.makeFirstResponder(tv)
             }
         }
     }
 
     func windowDidResignKey(_ notification: Notification) {
         if let window = notification.object as? NSWindow, window == mainWindow {
+            // Do not hide if switching to settings window
+            if let keyWin = NSApp.keyWindow, keyWin.identifier == settingsWindowIdentifier {
+                return
+            }
             hideMainWindow()
         }
     }

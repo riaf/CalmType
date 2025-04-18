@@ -12,14 +12,10 @@ struct CalmTypeApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button(String(localized: "New Window")) {
-                    if appDelegate.mainWindow == nil {
-                        appDelegate.showMainWindow()
-                    }
+                    appDelegate.showMainWindow()
                 }
                 .keyboardShortcut("n", modifiers: .command)
             }
-        }
-        .commands {
             CommandGroup(replacing: .appSettings) {
                 Button(String(localized: "Settings...")) {
                     appDelegate.openSettingsWindow()

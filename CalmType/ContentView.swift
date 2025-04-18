@@ -1,14 +1,17 @@
 import SwiftUI
+import AppKit
 
 struct ContentView: View {
     @EnvironmentObject var appData: AppData
 
     var body: some View {
         VStack(spacing: 0) {
-            TextEditor(text: $appData.inputText)
-                .font(.system(size: 16))
-                .padding(10)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            CustomTextEditor(
+                text: $appData.inputText,
+                onCopy: appData.copyToClipboard
+            )
+            .padding(10)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             HStack {
                 Spacer()
