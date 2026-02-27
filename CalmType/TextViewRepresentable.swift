@@ -6,9 +6,7 @@ import Carbon.HIToolbox
 struct CustomTextEditor: NSViewRepresentable {
     @Binding var text: String
     var onCopy: () -> Void
-    var onCancel: () -> Void = {
-        NotificationCenter.default.post(name: .hideMainWindow, object: nil)
-    }
+    var onCancel: () -> Void = {}
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
@@ -29,12 +27,10 @@ struct CustomTextEditor: NSViewRepresentable {
         textView.isSelectable = true
         textView.allowsUndo = true
         textView.font = .systemFont(ofSize: 16)
-        textView.textContainerInset = NSSize(width: 5, height: 5)
+        textView.textContainerInset = NSSize(width: 8, height: 8)
         textView.onCopy = onCopy
         textView.onCancel = onCancel
-        // Ensure background and text color are set for visibility
-        textView.drawsBackground = true
-        textView.backgroundColor = .textBackgroundColor
+        textView.drawsBackground = false
 
         // Enable dynamic resizing within scroll view
         textView.minSize = NSSize(width: 0, height: 0)
@@ -72,6 +68,30 @@ struct CustomTextEditor: NSViewRepresentable {
 class CopyOnCmdEnterTextView: NSTextView {
     var onCopy: (() -> Void)?
     var onCancel: (() -> Void)?
+    private var keyWindowObserver: NSObjectProtocol?
+
+    deinit {
+        removeKeyWindowObserver()
+    }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+
+        removeKeyWindowObserver()
+        guard let window else { return }
+
+        keyWindowObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.didBecomeKeyNotification,
+            object: window,
+            queue: .main
+        ) { [weak self] _ in
+            self?.focusIfNeeded()
+        }
+
+        DispatchQueue.main.async { [weak self] in
+            self?.focusIfNeeded()
+        }
+    }
 
     override func keyDown(with event: NSEvent) {
         if event.modifierFlags.contains(.command)
@@ -83,5 +103,17 @@ class CopyOnCmdEnterTextView: NSTextView {
         } else {
             super.keyDown(with: event)
         }
+    }
+
+    private func removeKeyWindowObserver() {
+        if let keyWindowObserver {
+            NotificationCenter.default.removeObserver(keyWindowObserver)
+            self.keyWindowObserver = nil
+        }
+    }
+
+    private func focusIfNeeded() {
+        guard let window, window.isVisible, window.isKeyWindow else { return }
+        window.makeFirstResponder(self)
     }
 }

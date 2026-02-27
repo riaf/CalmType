@@ -2,19 +2,22 @@ import SwiftUI
 import AppKit
 import OSLog
 
-extension Notification.Name {
-    static let hideMainWindow = Notification.Name("hideMainWindow")
-}
-
 class AppData: ObservableObject {
     @Published var inputText: String = ""
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "CalmType", category: "Clipboard")
 
-    func copyToClipboard() {
+    @discardableResult
+    func copyToClipboard() -> Bool {
         let content = inputText
+        guard !content.isEmpty else {
+            logger.notice("Copy skipped: input is empty")
+            return false
+        }
+
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         let success = pasteboard.setString(content, forType: .string)
-        let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "CalmType", category: "Clipboard")
+
         if success {
             // Log only length publicly; redact actual content as private
             logger.info("Copied to clipboard: length=\(content.count), data=\(content, privacy: .private)")
@@ -22,7 +25,10 @@ class AppData: ObservableObject {
             // Log failure with length info
             logger.error("Failed to copy to clipboard: length=\(content.count)")
         }
+        return success
+    }
+
+    func clearInput() {
         inputText = ""
-        NotificationCenter.default.post(name: .hideMainWindow, object: nil)
     }
 }

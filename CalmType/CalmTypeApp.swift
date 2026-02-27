@@ -7,7 +7,6 @@ struct CalmTypeApp: App {
     var body: some Scene {
         Settings {
             SettingsView()
-                .environmentObject(appDelegate.appData)
         }
         .commands {
             CommandGroup(replacing: .newItem) {
@@ -15,12 +14,6 @@ struct CalmTypeApp: App {
                     appDelegate.showMainWindow()
                 }
                 .keyboardShortcut("n", modifiers: .command)
-            }
-            CommandGroup(replacing: .appSettings) {
-                Button(String(localized: "Settings...")) {
-                    appDelegate.openSettingsWindow()
-                }
-                .keyboardShortcut(",", modifiers: .command)
             }
         }
     }
