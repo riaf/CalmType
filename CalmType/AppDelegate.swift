@@ -5,6 +5,7 @@ import AppKit
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private(set) var mainWindow: NSWindow?
     let appData = AppData()
+    private var previousActiveApp: NSRunningApplication?
 
     private let mainWindowIdentifier = NSUserInterfaceItemIdentifier("mainWindow")
 
@@ -56,6 +57,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         window.backgroundColor = .windowBackgroundColor
         window.isOpaque = true
         window.hasShadow = true
+        window.minSize = NSSize(width: 520, height: 300)
+        window.isMovableByWindowBackground = true
+        window.collectionBehavior.insert(.moveToActiveSpace)
 
         window.title = "CalmType"
         window.titleVisibility = .hidden
@@ -72,12 +76,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if mainWindow == nil {
             createMainWindow()
         }
+        cachePreviousActiveAppIfNeeded()
         NSApplication.shared.activate(ignoringOtherApps: true)
         mainWindow?.makeKeyAndOrderFront(nil)
     }
 
     private func hideMainWindow() {
         mainWindow?.orderOut(nil)
+        restorePreviousActiveAppIfNeeded()
     }
 
     private func toggleMainWindow() {
@@ -92,5 +98,26 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if let window = notification.object as? NSWindow, window == mainWindow {
             mainWindow = nil
         }
+    }
+
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        if sender == mainWindow {
+            hideMainWindow()
+            return false
+        }
+        return true
+    }
+
+    private func cachePreviousActiveAppIfNeeded() {
+        guard let frontmostApp = NSWorkspace.shared.frontmostApplication else { return }
+        let currentPID = ProcessInfo.processInfo.processIdentifier
+        guard frontmostApp.processIdentifier != currentPID else { return }
+        previousActiveApp = frontmostApp
+    }
+
+    private func restorePreviousActiveAppIfNeeded() {
+        guard let app = previousActiveApp,
+              !app.isTerminated else { return }
+        _ = app.activate(options: [.activateIgnoringOtherApps])
     }
 }

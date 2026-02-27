@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%lld" : {
-
-    },
     "App Toggle:" : {
       "localizations" : {
         "ja" : {
@@ -20,16 +17,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "動作"
-          }
-        }
-      }
-    },
-    "Characters" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文字"
           }
         }
       }
@@ -94,17 +81,6 @@
         }
       }
     },
-    "Settings..." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "設定…"
-          }
-        }
-      }
-    },
     "Shortcut: ⌘ + Enter" : {
       "localizations" : {
         "ja" : {
@@ -131,6 +107,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "メインウィンドウでショートカットヒントを表示"
+          }
+        }
+      }
+    },
+    "Type your text here..." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここにテキストを入力..."
           }
         }
       }

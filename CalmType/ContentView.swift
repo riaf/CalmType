@@ -16,21 +16,37 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            CustomTextEditor(
-                text: $appData.inputText,
-                onCopy: handleCopy,
-                onCancel: onRequestClose
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(12)
+            ZStack(alignment: .topLeading) {
+                CustomTextEditor(
+                    text: $appData.inputText,
+                    onCopy: handleCopy,
+                    onCancel: onRequestClose
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, 10)
+                .padding(.top, 8)
+                .padding(.bottom, 6)
 
-            HStack {
-                Button(String(localized: "Copy")) {
-                    handleCopy()
+                if appData.inputText.isEmpty {
+                    Text(String(localized: "Type your text here..."))
+                        .font(.body)
+                        .foregroundStyle(.tertiary)
+                        .padding(.top, 16)
+                        .padding(.leading, 18)
+                        .allowsHitTesting(false)
                 }
-                .keyboardShortcut(.return, modifiers: .command)
-                .buttonStyle(.borderedProminent)
-                .disabled(!canCopy)
+            }
+
+            Divider()
+
+            HStack(spacing: 10) {
+                if showShortcutHints {
+                    Text(String(localized: "Shortcut: ⌘ + Enter"))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
 
                 Button(String(localized: "Clear")) {
                     appData.clearInput()
@@ -38,24 +54,15 @@ struct ContentView: View {
                 .buttonStyle(.bordered)
                 .disabled(!canCopy)
 
-                Text("\(appData.inputText.count)")
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
-                    .frame(minWidth: 28, alignment: .trailing)
-                Text(String(localized: "Characters"))
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-
-                Spacer()
-
-                if showShortcutHints {
-                    Text(String(localized: "Shortcut: ⌘ + Enter"))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                Button(String(localized: "Copy")) {
+                    handleCopy()
                 }
+                .keyboardShortcut(.return, modifiers: .command)
+                .buttonStyle(.borderedProminent)
+                .disabled(!canCopy)
             }
             .padding(.horizontal, 12)
-            .padding(.vertical, 10)
+            .padding(.vertical, 8)
             .background(.bar)
         }
         .overlay(alignment: .topTrailing) {
@@ -64,7 +71,7 @@ struct ContentView: View {
                     .font(.caption.weight(.semibold))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(.regularMaterial, in: Capsule())
+                    .background(.regularMaterial, in: Capsule(style: .continuous))
                     .padding(12)
                     .transition(.move(edge: .top).combined(with: .opacity))
             }

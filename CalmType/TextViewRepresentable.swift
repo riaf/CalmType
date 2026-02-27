@@ -26,8 +26,14 @@ struct CustomTextEditor: NSViewRepresentable {
         textView.isEditable = true
         textView.isSelectable = true
         textView.allowsUndo = true
-        textView.font = .systemFont(ofSize: 16)
+        textView.font = .preferredFont(forTextStyle: .body)
+        textView.textColor = .labelColor
+        textView.insertionPointColor = .controlAccentColor
+        textView.isAutomaticQuoteSubstitutionEnabled = false
+        textView.isAutomaticDashSubstitutionEnabled = false
+        textView.isAutomaticTextReplacementEnabled = false
         textView.textContainerInset = NSSize(width: 8, height: 8)
+        textView.textContainer?.lineFragmentPadding = 0
         textView.onCopy = onCopy
         textView.onCancel = onCancel
         textView.drawsBackground = false
